@@ -20,7 +20,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { on } from "events";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -71,8 +70,19 @@ const SignUpForm = () => {
         },
         onError: (error: any) => {
           if (error.error?.code === "USER_ALREADY_EXISTS")
-            toast.error("E-mail ou senha inválidos. Tente novamente.");
-          else toast.error(error.error.message);
+            form.setError("name", {
+              message: "",
+            });
+          form.setError("email", {
+            message: "",
+          });
+          form.setError("password", {
+            message: "",
+          });
+          form.setError("passwordConfirm", {
+            message: "",
+          });
+          toast.error("E-mail ou senha inválidos. Tente novamente.");
         },
       },
     );

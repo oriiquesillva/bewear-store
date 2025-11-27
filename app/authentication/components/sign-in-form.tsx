@@ -18,8 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { auth } from "@/lib/auth";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { on } from "events";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
@@ -30,6 +35,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const SignInForm = () => {
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,9 +44,29 @@ const SignInForm = () => {
     },
   });
 
-  function onSubmit(data: FormValues) {
-    console.log("FORMULÁRIO VALIDADO E ENVIADO");
-    console.log(data);
+  async function onSubmit(data: FormValues) {
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          router.push("/");
+          toast.success("Autenticado com sucesso!");
+        },
+        onError: (error: any) => {
+          if (error.error?.code === "INVALID_EMAIL_OR_PASSWORD")
+            form.setError("email", {
+              message: "",
+            });
+          form.setError("password", {
+            message: "",
+          });
+          toast.error("Dados de login inválidos");
+        },
+      },
+    );
   }
 
   return (
