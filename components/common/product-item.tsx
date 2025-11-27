@@ -22,7 +22,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
             height={250}
             className="rounded-3xl"
           />
-          <div className="flex max-w-[250px] flex-col gap-1">
+          <div className="flex max-w-[250px] flex-col gap-1 px-2">
             <p className="truncate text-sm font-medium">{product.name}</p>
             <p className="text-muted-foreground truncate text-xs font-medium">
               {product.description}
